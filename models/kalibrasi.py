@@ -24,3 +24,4 @@ class KalibrasiAlatKesehatan(models.Model):
         ('done', 'Terkalibrasi'),
         ('expired', 'Kadaluarsa'),
     ], string='Status', default='draft', tracking=True)
+    
