@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_create,perm_read,perm_write,perm_unlink
+access_kalibrasi_alat_kesehatan,access.kalibrasi.alat.kesehatan,model_kalibrasi_alat_kesehatan,,1,1,1,1
