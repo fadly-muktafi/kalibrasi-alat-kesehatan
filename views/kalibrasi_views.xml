@@ -9,8 +9,10 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
+                <field name="customer_id"/>
                 <field name="product_id"/>
                 <field name="model_alat"/>
+                <field name="no_seri"/>
                 <field name="technician_id"/>
                 <field name="hasil" widget="badge"
                        decoration-success="hasil == 'approved'"
@@ -40,29 +42,29 @@
                     <group>
                         <group string="Informasi Alat">
                             <field name="name"/>
+                            <field name="customer_id"/>
                             <field name="product_id"/>
                             <field name="model_alat"/>
                             <field name="no_seri"/>
                         </group>
                         <group string="Informasi Kalibrasi">
-                            <group string="Teknisi dan Waktu">
+                            <group>
                                 <field name="technician_id"/>
                                 <field name="kalibrasi_mulai" invisible="status not in ('process', 'done')"/>
                                 <field name="kalibrasi_selesai" invisible="status != 'done'"/>
                             </group>
-                            <group string="Jadwal dan Hasil">
+                            <group>
                                 <field name="interval"/>
                                 <field name="jatuh_tempo" invisible="status not in ('done', 'expired')"/>
                                 <field name="hasil" widget="badge" invisible="status not in ('done','expired')"
                                     decoration-success="hasil == 'approved'"
                                     decoration-danger="hasil == 'rejected'"/>
                             </group>
+                            <field name="catatan" nolabel="1" placeholder="Keterangan..."/>
                         </group>
                     </group>
-                    <group>
-                        <field name="catatan" nolabel="1" placeholder="Keterangan..."/>
-                    </group>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>

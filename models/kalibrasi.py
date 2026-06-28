@@ -6,9 +6,11 @@ class KalibrasiAlatKesehatan(models.Model):
     _description = 'Manajemen Kalibrasi Alat Kesehatan'
     _order = 'jatuh_tempo desc'
     _rec_name = 'name'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Kode Kalibrasi', default='Data Baru', copy=False, required=True)
     product_id = fields.Many2one('product.product', string='Alat Kesehatan', required=True)
+    customer_id = fields.Many2one('res.partner', string='Pelanggan', required=True)
     model_alat = fields.Char(string='Model Alat', required=True)
     no_seri = fields.Char(string='No. Seri', required=True)
     technician_id = fields.Many2one('hr.employee', string='Teknisi', required=True)
@@ -20,7 +22,7 @@ class KalibrasiAlatKesehatan(models.Model):
     hasil = fields.Selection([
         ('approved', 'Lolos'),
         ('rejected', 'Gagal'),
-    ], string='Hasil Kalibrasi')
+    ], string='Hasil')
     status = fields.Selection([
         ('draft', 'Draft'),
         ('process', 'Mengkalibrasi'),
@@ -49,3 +51,11 @@ class KalibrasiAlatKesehatan(models.Model):
         self.kalibrasi_selesai = fields.Date.today()
         self.hasil = 'rejected'
         self.status = 'done'
+
+    def action_check_expired(self):
+        today = fields.Date.today()
+        expired_records = self.search([
+            ('status','=','done'),
+            ('jatuh_tempo','<',today),
+        ])
+        expired_records.write({'status': 'expired'})
