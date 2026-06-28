@@ -9,12 +9,17 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="customer_id"/>
                 <field name="product_id"/>
-                <field name="tanggal_kalibrasi"/>
-                <field name="hasil"/>
-                <field name="tanggal_berikutnya"/>
-                <field name="status"/>
+                <field name="model_alat"/>
+                <field name="technician_id"/>
+                <field name="hasil" widget="badge"
+                       decoration-success="hasil == 'approved'"
+                       decoration-danger="hasil == 'rejected'"/>
+                <field name="jatuh_tempo"/>
+                <field name="status" widget="badge"
+                       decoration-primary="status == 'done'"
+                       decoration-info="status == 'process'"
+                       decoration-warning="status == 'expired'"/>
             </list>
         </field>
     </record>
@@ -25,7 +30,39 @@
         <field name="model">kalibrasi.alat.kesehatan</field>
         <field name="arch" type="xml">
             <form>
-
+                <header>
+                    <button name="action_process" string="Kalibrasi" type="object" class="btn-primary" invisible="status not in ('draft', 'expired')"/>
+                    <button name="action_approved" string="Lolos" type="object" class="btn-success" invisible="status != 'process'"/>
+                    <button name="action_rejected" string="Gagal" type="object" class="btn-danger" invisible="status != 'process'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,process,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Informasi Alat">
+                            <field name="name"/>
+                            <field name="product_id"/>
+                            <field name="model_alat"/>
+                            <field name="no_seri"/>
+                        </group>
+                        <group string="Informasi Kalibrasi">
+                            <group string="Teknisi dan Waktu">
+                                <field name="technician_id"/>
+                                <field name="kalibrasi_mulai" invisible="status not in ('process', 'done')"/>
+                                <field name="kalibrasi_selesai" invisible="status != 'done'"/>
+                            </group>
+                            <group string="Jadwal dan Hasil">
+                                <field name="interval"/>
+                                <field name="jatuh_tempo" invisible="status not in ('done', 'expired')"/>
+                                <field name="hasil" widget="badge" invisible="status not in ('done','expired')"
+                                    decoration-success="hasil == 'approved'"
+                                    decoration-danger="hasil == 'rejected'"/>
+                            </group>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="catatan" nolabel="1" placeholder="Keterangan..."/>
+                    </group>
+                </sheet>
             </form>
         </field>
     </record>
@@ -36,7 +73,17 @@
         <field name="model">kalibrasi.alat.kesehatan</field>
         <field name="arch" type="xml">
             <search>
-
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="model_alat"/>
+                <field name="technician_id"/>
+                <field name="jatuh_tempo"/>
+                <filter string="Lolos" name="filter_approved" domain="[('hasil','=','approved')]"/>
+                <filter string="Gagal" name="filter_rejected" domain="[('hasil','=','rejected')]"/>
+                <filter string="Draft" name="filter_draft" domain="[('status','=','draft')]"/>
+                <filter string="Mengkalibrasi" name="filter_process" domain="[('status','=','process')]"/>
+                <filter string="Terkalibrasi" name="filter_done" domain="[('status','=','done')]"/>
+                <filter string="Kadaluwarsa" name="filter_expired" domain="[('status','=','expired')]"/>
             </search>
         </field>
     </record>
@@ -47,6 +94,8 @@
         <field name="res_model">kalibrasi.alat.kesehatan</field>
         <field name="view_mode">list,form</field>
     </record>
-    <menuitem />
+    <menuitem id="menu_kalibrasi_alat_kesehatan_root" name="Kalibrasi Alat Kesehatan" sequence="100"/>
+    <menuitem id="menu_kalibrasi_alat_kesehatan_list" name="Daftar Kalibrasi" parent="menu_kalibrasi_alat_kesehatan_root"
+              action="action_kalibrasi_alat_kesehatan" sequence="10"/>
 
 </odoo>
